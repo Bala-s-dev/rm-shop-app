@@ -1,6 +1,9 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { authenticateWithBookId, signOut as authSignOut } from '@/services/authService';
+import {
+  authenticateWithBookId,
+  signOut as authSignOut,
+} from '@/services/authService';
 import { AuthContextType, User } from '@/types';
 
 const AuthContext = createContext<AuthContextType>({
@@ -18,7 +21,9 @@ export const useAuth = () => {
   return context;
 };
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -43,9 +48,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       setLoading(true);
       const userData = await authenticateWithBookId(bookid);
+
       if (userData) {
-        setUser(userData);
-        await AsyncStorage.setItem('user', JSON.stringify(userData));
+        // Ensure isAdmin is always a strict boolean
+        const normalizedUser: User = {
+          ...userData,
+          isAdmin: Boolean(userData.isAdmin),
+        };
+
+        setUser(normalizedUser);
+        await AsyncStorage.setItem('user', JSON.stringify(normalizedUser));
         return true;
       }
       return false;
@@ -74,9 +86,5 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     signOut,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
