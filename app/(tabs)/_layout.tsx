@@ -15,47 +15,40 @@ export default function TabLayout() {
         },
         tabBarActiveTintColor: '#FFD700',
         tabBarInactiveTintColor: '#888',
-      }}>
+      }}
+    >
       <Tabs.Screen
         name="index"
         options={{
           title: 'Home',
-          tabBarIcon: ({ size, color }) => (
-            <Home size={size} color={color} />
-          ),
+          tabBarIcon: ({ size, color }) => <Home size={size} color={color} />,
         }}
       />
       <Tabs.Screen
         name="profile"
         options={{
           title: 'Profile',
-          tabBarIcon: ({ size, color }) => (
-            <User size={size} color={color} />
-          ),
+          tabBarIcon: ({ size, color }) => <User size={size} color={color} />,
         }}
       />
-      {user?.isAdmin && (
-        <>
-          <Tabs.Screen
-            name="admin"
-            options={{
-              title: 'Admin',
-              tabBarIcon: ({ size, color }) => (
-                <Settings size={size} color={color} />
-              ),
-            }}
-          />
-          <Tabs.Screen
-            name="users"
-            options={{
-              title: 'Users',
-              tabBarIcon: ({ size, color }) => (
-                <Users size={size} color={color} />
-              ),
-            }}
-          />
-        </>
-      )}
+      <Tabs.Screen
+        name="admin"
+        options={{
+          title: 'Admin',
+          tabBarIcon: ({ size, color }) => (
+            <Settings size={size} color={color} />
+          ),
+          href: user?.isAdmin ? '/admin' : null,
+        }}
+      />
+      <Tabs.Screen
+        name="users"
+        options={{
+          title: 'Users',
+          tabBarIcon: ({ size, color }) => <Users size={size} color={color} />,
+          href: user?.isAdmin ? '/users' : null,
+        }}
+      />
     </Tabs>
   );
 }

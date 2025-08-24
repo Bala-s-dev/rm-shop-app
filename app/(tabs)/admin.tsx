@@ -1,9 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TextInput, Alert } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TextInput,
+  Alert,
+} from 'react-native';
+import * as Notifications from 'expo-notifications';
 import { CustomButton } from '@/components/CustomButton';
 import { StatsCard } from '@/components/StatsCard';
 import { useAuth } from '@/context/AuthContext';
-import { updatePrices, getCurrentPrices, getAllTransactions } from '@/services/firestoreService';
+import {
+  updatePrices,
+  getCurrentPrices,
+  getAllTransactions,
+} from '@/services/firestoreService';
+import { requestNotificationPermissions } from '@/services/notificationService';
 import { Price, Transaction } from '@/types';
 
 export default function AdminScreen() {
@@ -18,8 +31,26 @@ export default function AdminScreen() {
     if (user?.isAdmin) {
       fetchCurrentPrices();
       fetchTransactions();
+      setupAdminNotifications();
     }
   }, [user]);
+
+  const setupAdminNotifications = async () => {
+    await requestNotificationPermissions();
+
+    // Listen for transaction notifications
+    const subscription = Notifications.addNotificationReceivedListener(
+      (notification) => {
+        const { title, body } = notification.request.content;
+        if (title?.includes('New Transaction')) {
+          Alert.alert(title, body);
+          fetchTransactions(); // Refresh transactions when notification received
+        }
+      }
+    );
+
+    return () => subscription.remove();
+  };
 
   const fetchCurrentPrices = async () => {
     try {
@@ -77,7 +108,7 @@ export default function AdminScreen() {
     );
   }
 
-  const todayTransactions = transactions.filter(t => {
+  const todayTransactions = transactions.filter((t) => {
     const today = new Date();
     const transactionDate = new Date(t.transactionDate);
     return transactionDate.toDateString() === today.toDateString();
@@ -94,7 +125,9 @@ export default function AdminScreen() {
         />
         <StatsCard
           title="Total Revenue Today"
-          value={`₹${todayTransactions.reduce((sum, t) => sum + t.totalAmount, 0).toFixed(2)}`}
+          value={`₹${todayTransactions
+            .reduce((sum, t) => sum + t.totalAmount, 0)
+            .toFixed(2)}`}
         />
       </View>
 

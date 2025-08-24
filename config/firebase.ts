@@ -1,20 +1,23 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
+import { initializeAuth, getReactNativePersistence } from 'firebase/auth';
+import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
 import { getFirestore } from 'firebase/firestore';
 import { getMessaging, isSupported } from 'firebase/messaging';
 
+
 // Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyC53kVFqRXusn-OzbOx9TR-C6moOnV49Bc",
-  authDomain: "rm-shop-268b8.firebaseapp.com",
-  projectId: "rm-shop-268b8",
-  storageBucket: "rm-shop-268b8.firebasestorage.app",
-  messagingSenderId: "279599248305",
-  appId: "1:279599248305:web:4b67958272fd5a38648390"
+  apiKey: 'AIzaSyC53kVFqRXusn-OzbOx9TR-C6moOnV49Bc',
+  authDomain: 'rm-shop-268b8.firebaseapp.com',
+  projectId: 'rm-shop-268b8',
+  storageBucket: 'rm-shop-268b8.appspot.com',
+  messagingSenderId: '279599248305',
+  appId: '1:279599248305:web:4b67958272fd5a38648390',
 };
 
 // Initialize Firebase
-let app;
+let app : any;
 let auth;
 let db;
 let messaging = null;

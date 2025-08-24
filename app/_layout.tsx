@@ -15,7 +15,8 @@ function RootLayoutNav() {
     <Stack screenOptions={{ headerShown: false }}>
       {user ? (
         <Stack.Screen name="(tabs)" />
-      ) : (
+      ) 
+       : (
         <Stack.Screen name="(auth)" />
       )}
       <Stack.Screen name="+not-found" />
